@@ -1,4 +1,5 @@
 # Arch Linux Installation Guide
+> See [ArchWiki](https://wiki.archlinux.org/title/Installation_guide) for additional details
 
 ## WiFi
 
