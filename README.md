@@ -337,7 +337,7 @@ arch-chroot /mnt /bin/bash
 Install a text editor
 
 ```sh
-pacman -S neovim
+pacman -S --noconfirm --needed neovim
 ```
 
 ### Decrypting volumes
@@ -357,7 +357,7 @@ HOOKS=(... block encrypt lvm2 filesystems fsck)
 install lvm2
 
 ```sh
-pacman -S lvm2
+pacman -S --noconfirm --needed lvm2
 ```
 
 ### Bootloader
@@ -365,7 +365,7 @@ pacman -S lvm2
 Install grub and efibootmgr
 
 ```sh
-pacman -S grub efibootmgr
+pacman -S --noconfirm --needed grub efibootmgr
 ```
 
 Setup grub on efi partition
@@ -546,7 +546,7 @@ passwd
 Then install the shell you want
 
 ```sh
-pacman -S fish
+pacman -S --noconfirm --needed fish
 ```
 
 Add a new user as follows
@@ -574,7 +574,7 @@ EDITOR=nvim visudo
 ### Network Connectivity
 
 ```sh
-pacman -S networkmanager
+pacman -S --noconfirm --needed networkmanager
 systemctl enable NetworkManager
 ```
 
@@ -594,13 +594,13 @@ systemctl enable gdm
 For AMD
 
 ```sh
-pacman -S amd-ucode
+pacman -S --noconfirm --needed amd-ucode
 ```
 
 For intel
 
 ```sh
-pacman -S intel-ucode
+pacman -S --noconfirm --needed intel-ucode
 ```
 
 ```sh
