@@ -581,6 +581,8 @@ systemctl enable NetworkManager
 
 ### Display Manager
 
+## Gnome
+
 ```sh
 pacman -S gnome
 ```
@@ -589,6 +591,11 @@ pacman -S gnome
 systemctl enable gdm
 ```
 
+## Hyprland
+
+```sh
+pacman -S hyprland polkit sddm
+```
 
 ### Microcode
 
