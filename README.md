@@ -598,6 +598,10 @@ Hyprland
 pacman -S hyprland polkit sddm
 ```
 
+```sh
+systemctl enable sddm
+```
+
 ### Microcode
 
 For AMD
