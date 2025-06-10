@@ -595,7 +595,7 @@ Hyprland
 
 ```sh
 # Do not install sddm if you install both Gnome and Hyprland
-pacman -S hyprland uwsm sddm
+pacman -S hyprland uwsm sddm kitty
 ```
 
 ```sh
