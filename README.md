@@ -66,7 +66,7 @@ Make sure disk supports nvme sanitize
 nvme id-ctrl /dev/nvme0 -H | grep -E 'Format |Crypto Erase|Sanitize'
 ```
 
-The device should be /dev/nvme0 and **not** /dev/nvme0n1, for example
+The *device* should be /dev/nvme0 and **not** /dev/nvme0n1, for example
 ```sh
 nvme sanitize <device> -a start-block-erase
 ```
