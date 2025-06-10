@@ -53,8 +53,8 @@ ip addr
 
 List blocks. Could be nvme drives, such as nvme0 or nvme1. Could be sdx drives, such as sda or sdb.
 
-```
-$ lsblk
+```sh
+lsblk
 ```
 
 ### SSD memory cell clearing
