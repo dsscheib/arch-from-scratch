@@ -594,6 +594,7 @@ systemctl enable gdm
 Hyprland
 
 ```sh
+# Do not install sddm if you install both Gnome and Hyprland
 pacman -S hyprland polkit sddm
 ```
 
