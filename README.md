@@ -1,22 +1,22 @@
 # Setup Guide
 
-## WiFi
+## WiFi (if needed)
 
 Enter iwctl
 
-```
-$ iwctl
+```sh
+iwctl
 ```
 
 When inside, check for the name of your wireless devices.
 
-```
+```sh
 device list
 ```
 
 If your device name is wlan0, connect using the following command
 
-```
+```sh
 station wlan0 connect <SSID>
 ```
 
@@ -24,37 +24,84 @@ Make sure to enter in your password
 
 exit when complete
 
-```
+```sh
 exit
 ```
 
-## SSH
+## SSH for remote installation
 
 Enable sshd (should be done by default)
 
-```
-$ systemctl enable sshd
-```
-
-set a password for the current user
-
-```
-$ passwd
+```sh
+systemctl enable sshd
+systemctl start sshd
 ```
 
-## Write random data
+Set a password for the current user
 
-List blocks. In my case, my drives are nvme0n1 and nvme1n1. Your's might be the
-same, or the might be an sdx drive, such as sda or sdb.
+```sh
+passwd
+```
+
+Get IP address
+
+```sh
+ip addr
+```
+
+## Prepare disk(s) for encryption
+
+List blocks. Could be nvme drives, such as nvme0 or nvme1. Could be sdx drives, such as sda or sdb.
 
 ```
 $ lsblk
 ```
 
-Write random data into your drive. 
+### SSD memory cell clearing
+> See [ArchWiki](https://wiki.archlinux.org/title/Solid_state_drive/Memory_cell_clearing) for additional details
 
+Make sure disk supports nvme sanitize
+
+```sh
+nvme id-ctrl /dev/nvme0 -H | grep -E 'Format |Crypto Erase|Sanitize'
 ```
-$ dd if=/dev/urandom of=/dev/nvme0n1 status=progress bs=4096
+
+The device should be /dev/nvme0 and **not** /dev/nvme0n1, for example
+```sh
+nvme sanitize <device> -a start-block-erase
+```
+
+Check for completion
+
+```sh
+nvme sanitize-log /dev/nvme0
+```
+
+### Wipe disk(s)
+> See [ArchWiki](https://wiki.archlinux.org/title/Dm-crypt/Drive_preparation) for additional details
+
+Create a temporary encrypted container
+
+```sh
+cryptsetup open --type plain --key-file /dev/urandom --sector-size 4096 /dev/nvme0 to_be_wiped
+```
+
+Verify that it exists
+
+```sh
+lsblk
+```
+
+Wipe the container with zeros
+
+```sh
+dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress bs=1M
+```
+
+Close the temporary container
+
+```sh
+cryptsetup close to_be_wiped
 ```
 
 ## Partitioning Data
