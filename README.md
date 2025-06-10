@@ -1,6 +1,6 @@
 # Arch Linux Installation Guide
 
-## WiFi (if needed)
+## WiFi
 
 Enter iwctl
 
