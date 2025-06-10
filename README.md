@@ -597,7 +597,7 @@ For AMD
 pacman -S --noconfirm --needed amd-ucode
 ```
 
-For intel
+For Intel
 
 ```sh
 pacman -S --noconfirm --needed intel-ucode
