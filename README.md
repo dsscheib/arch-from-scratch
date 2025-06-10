@@ -104,17 +104,17 @@ Close the temporary container
 cryptsetup close to_be_wiped
 ```
 
-## Partitioning Data
+## Partitioning disk(s)
 
 Get the names of the blocks
 
-```
+```sh
 $ lsblk
 ```
 
 For both partition setups, you'll want to setup a table on your primary drive.
 
-```
+```sh
 $ gdisk /dev/nvme0n1
 ```
 
@@ -136,18 +136,20 @@ follows.
 |-----------|--------------|-------------|------|
 | 1         | default      | default     | 8302 |
 
+Write changes to disk using the `w` command
+
 ## Encryption
 
 Load the encryption modules to be safe.
 
-```
+```sh
 $ modprobe dm-crypt
 $ modprobe dm-mod
 ```
 
 Setting up encryption on our luks lvm partiton
 
-```
+```sh
 $ cryptsetup luksFormat -v -s 512 -h sha512 /dev/nvme0n1p3
 ```
 
@@ -156,19 +158,19 @@ Enter in your password and **Keep it safe**. There is no "forgot password" here.
 
 If you have a home partition, then initialize this as well
 
-```
+```sh
 $ cryptsetup luksFormat -v -s 512 -h sha512 /dev/nvme1n1p1
 ```
 
 Mount the drives:
 
-```
+```sh
 $ cryptsetup open /dev/nvme0n1p3 luks_lvm
 ```
 
 If you have a home parition:
 
-```
+```sh
 $ cryptsetup open /dev/nvme1n1p1 arch-home
 ```
 
@@ -176,17 +178,17 @@ $ cryptsetup open /dev/nvme1n1p1 arch-home
 
 Create the volume and volume group
 
-```
+```sh
 $ pvcreate /dev/mapper/luks_lvm
 
 $ vgcreate arch /dev/mapper/luks_lvm
 ```
 
 Create a volume for your swap space. A good size for this is your RAM size + 2GB.
-In my case, 64GB of RAM + 2GB = 66G.
+In my case, 32GB of RAM + 2GB = 34G.
 
-```
-$ lvcreate -n swap -L 66G arch
+```sh
+$ lvcreate -n swap -L 34G arch
 ```
 
 Next you have a few options depending on your setup
@@ -200,7 +202,7 @@ and home, or two separate volumes.
 Single volume is the most straightforward. To do this, just use the entire
 disk space for your root volume
 
-```
+```sh
 $ lvcreate -n root -l +100%FREE arch
 ```
 
@@ -209,13 +211,13 @@ $ lvcreate -n root -l +100%FREE arch
 For two volumes, you'll need to estimate the max size you want for either your
 root or home volumes. With a root volume of 200G, this looks like:
 
-```
+```sh
 $ lvcreate -n root -L 200G arch
 ```
 
 Then use remaining disk space for home
 
-```
+```sh
 $ lvcreate -n home -l +100%FREE arch
 ```
 
@@ -223,7 +225,7 @@ $ lvcreate -n home -l +100%FREE arch
 
 If you have two disks, then create a single volume on your LVM disk.
 
-```
+```sh
 $ lvcreate -n root -l +100%FREE arch
 ```
 
@@ -232,31 +234,31 @@ $ lvcreate -n root -l +100%FREE arch
 
 FAT32 on EFI partiton
 
-```
+```sh
 $ mkfs.fat -F32 /dev/nvme0n1p1 
 ```
 
 EXT4 on Boot partiton
 
-```
+```sh
 $ mkfs.ext4 /dev/nvme0n1p2
 ```
 
 BTRFS on root
 
-```
+```sh
 $ mkfs.btrfs -L root /dev/mapper/arch-root
 ```
 
 BTRFS on home if exists
 
-```
+```sh
 $ mkfs.btrfs -L home /dev/mapper/arch-home
 ```
 
 Setup swap device
 
-```
+```sh
 $ mkswap /dev/mapper/arch-swap
 ```
 
@@ -264,68 +266,68 @@ $ mkswap /dev/mapper/arch-swap
 
 Mount swap
 
-```
+```sh
 $ swapon /dev/mapper/arch-swap
 $ swapon -a
 ```
 
 Mount root 
 
-```
+```sh
 $ mount /dev/mapper/arch-root /mnt
 ```
 
 Create home and boot
 
-```
+```sh
 $ mkdir -p /mnt/{home,boot}
 ```
 
 Mount the boot partiton
 
-```
+```sh
 $ mount /dev/nvme0n1p2 /mnt/boot
 ```
 
 Mount the home partition if you have one, otherwise skip this
 
-```
+```sh
 $ mount /dev/mapper/arch-home /mnt/home
 ```
 
 Create the efi directory
 
-```
+```sh
 $ mkdir /mnt/boot/efi
 ```
 
 Mount the EFI directory
 
-```
+```sh
 $ mount /dev/nvme0n1p1 /mnt/boot/efi
 ```
 
 ## Install arch
 
-```
+```sh
 $ pacstrap -K /mnt base linux linux-firmware
 ```
 
 With base-devel
 
-```
+```sh
 $ pacstrap -K /mnt base base-devel linux linux-firmware
 ```
 
 Load the file table
 
-```
+```sh
 $ genfstab -U -p /mnt > /mnt/etc/fstab
 ```
 
 chroot into your installation
 
-```
+```sh
 $ arch-chroot /mnt /bin/bash
 ```
 
@@ -335,31 +337,27 @@ $ arch-chroot /mnt /bin/bash
 
 Install a text editor
 
-```
+```sh
 $ pacman -S neovim
-```
-
-```
-$ pacman -S nano
 ```
 
 ### Decrypting volumes
 
 Open up mkinitcpio.conf
 
-```
+```sh
 $ nvim /etc/mkinitcpio.conf
 ```
 
 add `encrypt` and `lvm2` into the hooks
 
-```
+```sh
 HOOKS=(... block encrypt lvm2 filesystems fsck)
 ```
 
 install lvm2
 
-```
+```sh
 $ pacman -S lvm2
 ```
 
@@ -367,25 +365,25 @@ $ pacman -S lvm2
 
 Install grub and efibootmgr
 
-```
+```sh
 $ pacman -S grub efibootmgr
 ```
 
 Setup grub on efi partition
 
-```
+```sh
 $ grub-install --efi-directory=/boot/efi
 ```
 
 obtain your lvm partition device UUID
 
-```
+```sh
 blkid /dev/nvme0n1p3
 ```
 
 Copy this to your clipboard
 
-```
+```sh
 $ nvim /etc/default/grub
 ```
 
