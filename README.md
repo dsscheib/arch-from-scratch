@@ -1,4 +1,4 @@
-# Installation Guide
+# Arch Linux Installation Guide
 
 ## WiFi (if needed)
 
