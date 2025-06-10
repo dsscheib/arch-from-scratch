@@ -1,4 +1,4 @@
-# Setup Guide
+# Installation Guide
 
 ## WiFi (if needed)
 
