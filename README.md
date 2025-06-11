@@ -584,7 +584,7 @@ systemctl enable NetworkManager
 Gnome
 
 ```sh
-pacman -S gnome
+pacman -S --needed gnome
 ```
 
 ```sh
@@ -595,7 +595,7 @@ Hyprland
 
 ```sh
 # Do not install sddm if you install both Gnome and Hyprland
-pacman -S hyprland uwsm sddm kitty
+pacman -S --needed hyprland uwsm sddm kitty
 ```
 
 ```sh
